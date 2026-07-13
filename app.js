@@ -4,8 +4,8 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  setPersistence,           // Enforces strict session lifecycle constraints
-  browserSessionPersistence // Wipes credentials the instant the tab or window is closed
+  setPersistence,           
+  browserSessionPersistence 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -27,6 +27,7 @@ const db = getDatabase(app);
 const FEE = 3600;
 let residents = [];
 let openMenuId = null;
+let currentStatusFilter = 'ALL'; // Tracks 'ALL', 'PAID', or 'UNPAID'
 
 const periodsConfig = [
   { value: 'T1-2026', label: 'Trimestre 1' },
@@ -68,7 +69,6 @@ authSubmitBtn.addEventListener('click', () => {
   const password = authPasswordInput.value;
   authError.style.display = 'none';
 
-  // Apply persistence state verification before executing sign-in validation
   setPersistence(auth, browserSessionPersistence)
     .then(() => {
       return signInWithEmailAndPassword(auth, email, password);
@@ -356,6 +356,22 @@ searchClearBtn.addEventListener('click', () => {
   render();
 });
 
+// Paid / Unpaid Status Tabs Handler Logic
+document.getElementById('statusFilterTabs').addEventListener('click', (e) => {
+  const clickedTab = e.target.closest('.filter-tab');
+  if (!clickedTab) return;
+
+  // Toggle visual active classes across elements
+  document.querySelectorAll('#statusFilterTabs .filter-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  clickedTab.classList.add('active');
+
+  // Assign filter status and trigger data refresh loop
+  currentStatusFilter = clickedTab.getAttribute('data-status');
+  render();
+});
+
 periodSelect.addEventListener('change', () => { render(); });
 blockFilterSelect.addEventListener('change', () => { render(); });
 document.getElementById('addBtn').addEventListener('click', addResident);
@@ -390,8 +406,15 @@ function render() {
       return matchName || matchHouse;
     });
   }
+
+  // 3. Filter by Paid / Unpaid Status Condition
+  if (currentStatusFilter === 'PAID') {
+    filtered = filtered.filter(r => isPaid(r, period));
+  } else if (currentStatusFilter === 'UNPAID') {
+    filtered = filtered.filter(r => !isPaid(r, period));
+  }
   
-  // 3. Sort structural list entries
+  // 4. Sort structural list entries
   filtered = sortResidents([...filtered]);
 
   const listEl = document.getElementById('residentsList');
