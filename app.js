@@ -283,7 +283,7 @@ window.executePrintJob = function() {
       // Map rows cleanly with matching style alignments
       let tableRowsHTML = blockResidents.map(r => {
         let rowCells = `
-          <td class="print-td text-center">B. ${escapeHtml(r.block)}</td>
+          <td class="print-td text-center"> ${escapeHtml(r.block)}</td>
           <td class="print-td text-center">${escapeHtml(r.house)}</td>
           <td class="print-td text-left" style="text-transform: uppercase;">${escapeHtml(r.name)}</td>
         `;
@@ -292,7 +292,7 @@ window.executePrintJob = function() {
           const paid = isPaid(r, p);
           rowCells += `
             <td class="print-td text-center ${paid ? 'print-status-paid' : 'print-status-unpaid'}">
-              ${paid ? '3.600,00' : ''}
+              ${paid ? '3.600,00 DA' : ''}
             </td>`;
         });
         return `<tr class="print-tr">${rowCells}</tr>`;
