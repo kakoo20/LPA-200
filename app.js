@@ -376,11 +376,13 @@ function render() {
   const blockFilter = getCurrentBlockFilter();
   const searchQuery = residentSearchInput.value.trim().toLowerCase();
   
+  // 1. Filter by Block
   let filtered = residents;
   if (blockFilter !== 'ALL') {
     filtered = residents.filter(r => r.block.toUpperCase() === blockFilter.toUpperCase());
   }
   
+  // 2. Filter by search text (Name or House No.)
   if (searchQuery) {
     filtered = filtered.filter(r => {
       const matchName = r.name.toLowerCase().includes(searchQuery);
@@ -389,6 +391,7 @@ function render() {
     });
   }
   
+  // 3. Sort structural list entries
   filtered = sortResidents([...filtered]);
 
   const listEl = document.getElementById('residentsList');
@@ -426,6 +429,7 @@ function render() {
     }).join('');
   }
 
+  // Summary counts calculate properly based on filtered records
   const total = filtered.length;
   const paidCount = filtered.filter(r => isPaid(r, period)).length;
   const unpaidCount = total - paidCount;
