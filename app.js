@@ -273,17 +273,15 @@ window.executePrintJob = function() {
         hour: '2-digit', minute: '2-digit' 
       });
 
-      // Build out table headers matching your layout style properties
       let tableHeaderCells = `<th class="print-th" style="width: 10%;">Bloc</th><th class="print-th" style="width: 12%;">N° Appt</th><th class="print-th" style="text-align: left;">Nom Complet</th>`;
       targetPeriods.forEach(p => {
         const cfg = periodsConfig.find(c => c.value === p);
         tableHeaderCells += `<th class="print-th" style="width: 15%;">${cfg ? cfg.label : p}</th>`;
       });
 
-      // Map rows cleanly with matching style alignments
       let tableRowsHTML = blockResidents.map(r => {
         let rowCells = `
-          <td class="print-td text-center"> ${escapeHtml(r.block)}</td>
+          <td class="print-td text-center">B. ${escapeHtml(r.block)}</td>
           <td class="print-td text-center">${escapeHtml(r.house)}</td>
           <td class="print-td text-left" style="text-transform: uppercase;">${escapeHtml(r.name)}</td>
         `;
@@ -291,7 +289,7 @@ window.executePrintJob = function() {
         targetPeriods.forEach(p => {
           const paid = isPaid(r, p);
           rowCells += `
-            <td class="print-td text-center ${paid ? 'print-status-paid' : 'print-status-unpaid'}">
+            <td class="print-td text-center" style="font-weight: ${paid ? 'bold' : 'normal'};">
               ${paid ? '3.600,00 DA' : ''}
             </td>`;
         });
@@ -337,7 +335,6 @@ searchToggleBtn.addEventListener('click', () => {
   if (searchBarContainer.classList.contains('open')) {
     residentSearchInput.focus();
   } else {
-    // Reset search when closing panel
     residentSearchInput.value = '';
     searchClearBtn.style.display = 'none';
     render();
@@ -379,13 +376,11 @@ function render() {
   const blockFilter = getCurrentBlockFilter();
   const searchQuery = residentSearchInput.value.trim().toLowerCase();
   
-  // 1. Filter by Block
   let filtered = residents;
   if (blockFilter !== 'ALL') {
     filtered = residents.filter(r => r.block.toUpperCase() === blockFilter.toUpperCase());
   }
   
-  // 2. Filter by search text (Name or House No.)
   if (searchQuery) {
     filtered = filtered.filter(r => {
       const matchName = r.name.toLowerCase().includes(searchQuery);
@@ -394,7 +389,6 @@ function render() {
     });
   }
   
-  // 3. Sort structural list entries
   filtered = sortResidents([...filtered]);
 
   const listEl = document.getElementById('residentsList');
@@ -432,7 +426,6 @@ function render() {
     }).join('');
   }
 
-  // Summary counts match dynamically based on filters
   const total = filtered.length;
   const paidCount = filtered.filter(r => isPaid(r, period)).length;
   const unpaidCount = total - paidCount;
