@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neighborhood Association Manager</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app" style="display: flex; flex-direction: column; min-height: 100vh;">
+  
+  <!-- Sign In Layout Screen -->
+  <div id="authContainer">
+    <div class="auth-card">
+      <div class="auth-title">Association Portal</div>
+      <div class="auth-subtitle">Sign in to access synchronized cloud data</div>
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="field">
+          <label>Admin Email Address</label>
+          <input type="email" id="authEmail" placeholder="admin@domain.com">
+        </div>
+        <div class="field">
+          <label>Secure Password</label>
+          <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+        <button class="auth-btn" id="authSubmitBtn">Secure Log In</button>
+        <div class="error-message" id="authError">Invalid administrative credentials.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authenticated App View Workspace Layout -->
+  <div id="mainApp">
+    <div class="header">
+      <select class="period-select" id="periodSelect">
+        <option value="T1-2026">Trimester 1 (2026)</option>
+        <option value="T2-2026">Trimester 2 (2026)</option>
+        <option value="T3-2026">Trimester 3 (2026)</option>
+        <option value="T4-2026">Trimester 4 (2026)</option>
+      </select>
+      
+      <!-- Bloc Filter Selector -->
+      <div class="field" style="margin-bottom: 0;">
+        <select id="blockFilterSelect" class="period-select" style="min-width: 180px;">
+          <option value="ALL">tout les Blocs</option>
+          <optgroup label="Blocs A">
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="A3">A3</option>
+            <option value="A4">A4</option>
+            <option value="A5">A5</option>
+          </optgroup>
+          <optgroup label="Blocs B">
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+            <option value="B3">B3</option>
+            <option value="B4">B4</option>
+            <option value="B5">B5</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="header-right-group">
+        <!-- New Toggle Search Button -->
+        <button class="btn-search-toggle" id="searchToggleBtn" title="Search Residents">🔍 Rechercher</button>
+        <button class="btn-add" onclick="openManualAddModal()" style="padding: 10px 16px; font-weight: 700; border-radius: var(--radius);">+ Ajouter</button>
+        <button class="btn-bulk" onclick="openBulkModal()">📥 Importer une List</button>
+        <button class="btn-print" onclick="openPrintModal()">
+          <span>🖨️</span><span>Imprimer</span>
+        </button>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <!-- Expandable Search Input Bar Utility Row -->
+    <div class="search-bar-container" id="searchBarContainer">
+      <div class="search-input-wrapper">
+        <span class="search-icon-inside">🔍</span>
+        <input type="text" id="residentSearchInput" placeholder="Quick search by name or house/apartment number...">
+        <button class="search-clear-btn" id="searchClearBtn" style="display: none;">✕</button>
+      </div>
+    </div>
+
+    <div class="list-container">
+      <div class="empty-state" id="emptyState">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-6h6v6"/>
+        </svg>
+        <h3>No records available</h3>
+        <p>Your database branch contains no registered residents matching this selection.</p>
+      </div>
+      <div id="residentsList"></div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-stat"><div class="footer-stat-label">Collected</div><div class="footer-stat-value success" id="collectedAmount">0 DZD</div></div>
+      <div class="footer-stat"><div class="footer-stat-label">Outstanding</div><div class="footer-stat-value danger" id="outstandingAmount">0 DZD</div></div>
+      <div class="footer-stat">
+        <div class="footer-stat-label">Coverage</div><div class="footer-stat-value info" id="coveragePercent">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <div class="footer-stat"><div class="footer-stat-label">Total Households</div><div class="footer-stat-value" id="totalCount">0</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Dynamic Printing View Container Layout Structure -->
+<div id="printArea" style="display:none;">
+  <div class="print-header">
+    <h1>Neighborhood Association — Payment Register</h1>
+    <p id="printPeriodSummary"></p>
+  </div>
+  <table class="print-table">
+    <thead id="printTableHeader"></thead>
+    <tbody id="printTableBody"></tbody>
+  </table>
+</div>
+
+<!-- Manual Add Resident Pop-up Modal UI -->
+<div class="modal-backdrop" id="manualAddModal" onclick="closeManualAddModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-title">➕ Add Resident Manually</div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="field">
+        <label>Block</label>
+        <select id="blockInput">
+          <optgroup label="Block A"><option>A1</option><option>A2</option><option>A3</option><option>A4</option><option>A5</option></optgroup>
+          <optgroup label="Block B"><option>B1</option><option>B2</option><option>B3</option><option>B4</option><option>B5</option></optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>House / Apt</label>
+        <input type="text" id="houseInput" placeholder="e.g. 05" maxlength="10">
+      </div>
+      <div class="field">
+        <label>Resident Full Name</label>
+        <input type="text" id="nameInput" placeholder="e.g. Ahmed Benali" maxlength="60">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeManualAddModal()">Cancel</button>
+      <button class="btn-add" id="addBtn">Save Resident</button>
+    </div>
+  </div>
+</div>
+
+<!-- Print Configuration Selection Modal UI -->
+<div class="modal-backdrop" id="printModal" onclick="closePrintModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-title">🖨️ Configuration Options for Printing</div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="field">
+        <label>Target Bloc Selection</label>
+        <select id="printBlockSelect">
+          <option value="ALL">All Blocs combined</option>
+          <optgroup label="Block A"><option>A1</option><option>A2</option><option>A3</option><option>A4</option><option>A5</option></optgroup>
+          <optgroup label="Block B"><option>B1</option><option>B2</option><option>B3</option><option>B4</option><option>B5</option></optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Target Trimester Period Selection</label>
+        <select id="printTrimesterSelect">
+          <option value="CURRENT">Current Selected Trimester View Only</option>
+          <option value="ALL">All Trimesters Logged (Full Matrix Grid View)</option>
+          <option value="T1-2026">Trimester 1 (Jan-Feb-Mar) 2026</option>
+          <option value="T2-2026">Trimester 2 (Apr-May-Jun) 2026</option>
+          <option value="T3-2026">Trimester 3 (Jul-Aug-Sep) 2026</option>
+          <option value="T4-2026">Trimester 4 (Oct-Nov-Dec) 2026</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closePrintModal()">Cancel</button>
+      <button class="btn-add" onclick="executePrintJob()">Confirm & Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Import Modal Overlay Box -->
+<div class="modal-backdrop" id="bulkModal" onclick="closeBulkModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-title">📥 Bulk Import Residents List</div>
+    <textarea class="bulk-textarea" id="bulkInputText" placeholder="A1, 01, Jane Doe&#10;A1, 02, John Smith&#10;B3, 14, Ali Mansour"></textarea>
+    <div class="bulk-help">
+      <strong>Format rule:</strong> Paste one person per line separating fields with commas:<br>
+      <code>Block , HouseNumber , Full Name</code>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeBulkModal()">Cancel</button>
+      <button class="btn-add" id="importSubmitBtn" style="background: var(--success);">Process & Save List</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
