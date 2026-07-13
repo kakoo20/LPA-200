@@ -292,7 +292,7 @@ window.executePrintJob = function() {
           const paid = isPaid(r, p);
           rowCells += `
             <td class="print-td text-center ${paid ? 'print-status-paid' : 'print-status-unpaid'}">
-              ${paid ? 'REGLEMENT' : 'NON PAYÉ'}
+              ${paid ? '3.600,00' : ''}
             </td>`;
         });
         return `<tr class="print-tr">${rowCells}</tr>`;
