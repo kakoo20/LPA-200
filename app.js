@@ -273,25 +273,46 @@ window.executePrintJob = function() {
         hour: '2-digit', minute: '2-digit' 
       });
 
-      let tableHeaderCells = `<th class="print-th" style="width: 10%;">Bloc</th><th class="print-th" style="width: 12%;">N° Appt</th><th class="print-th" style="text-align: left;">Nom Complet</th>`;
-      targetPeriods.forEach(p => {
+      const boldRightBorder = 'border-right: 3px solid #000 !important;';
+      const thinRightBorder = 'border-right: 1px solid #ccc !important;';
+
+      // Clean single-row table header layout configuration
+      let tableHeaderCells = `
+        <th class="print-th" style="width: 7%; ${thinRightBorder}">Bloc</th>
+        <th class="print-th" style="width: 9%; ${thinRightBorder}">N° Appt</th>
+        <th class="print-th" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
+      `;
+
+      targetPeriods.forEach((p, idx) => {
         const cfg = periodsConfig.find(c => c.value === p);
-        tableHeaderCells += `<th class="print-th" style="width: 15%;">${cfg ? cfg.label : p}</th>`;
+        const periodLabel = cfg ? cfg.label : p;
+        const isLastTrimester = (idx === targetPeriods.length - 1);
+        const rightGroupBorder = isLastTrimester ? '' : boldRightBorder;
+
+        // Displays trimester name only once in the first sub-column slot
+        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${thinRightBorder}">${periodLabel}</th>`;
+        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${thinRightBorder}"></th>`;
+        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${rightGroupBorder}"></th>`;
       });
 
       let tableRowsHTML = blockResidents.map(r => {
         let rowCells = `
-          <td class="print-td text-center">B. ${escapeHtml(r.block)}</td>
+          <td class="print-td text-center" style="${thinRightBorder}">B. ${escapeHtml(r.block)}</td>
           <td class="print-td text-center">${escapeHtml(r.house)}</td>
-          <td class="print-td text-left" style="text-transform: uppercase;">${escapeHtml(r.name)}</td>
+          <td class="print-td text-left" style="text-transform: uppercase; ${boldRightBorder}">${escapeHtml(r.name)}</td>
         `;
         
-        targetPeriods.forEach(p => {
+        targetPeriods.forEach((p, idx) => {
           const paid = isPaid(r, p);
+          const mark = paid ? 'P' : '';
+          const isLastTrimester = (idx === targetPeriods.length - 1);
+          const rightGroupBorder = isLastTrimester ? '' : boldRightBorder;
+          
           rowCells += `
-            <td class="print-td text-center" style="font-weight: ${paid ? 'bold' : 'normal'};">
-              ${paid ? '3.600,00 DA' : ''}
-            </td>`;
+            <td class="print-td text-center" style="font-weight: bold; width: 5%; ${thinRightBorder}">${mark}</td>
+            <td class="print-td text-center" style="font-weight: bold; width: 5%; ${thinRightBorder}">${mark}</td>
+            <td class="print-td text-center" style="font-weight: bold; width: 5%; ${rightGroupBorder}">${mark}</td>
+          `;
         });
         return `<tr class="print-tr">${rowCells}</tr>`;
       }).join('');
@@ -302,7 +323,7 @@ window.executePrintJob = function() {
           <p>Etat de Paiement: <strong>Bloc ${blockKey}</strong> — ${trimesterText}</p>
           <div class="print-date-stamp">Le: ${currentTimestamp}</div>
         </div>
-        <table class="print-table">
+        <table class="print-table" style="border-collapse: collapse; width: 100%; table-layout: fixed;">
           <thead>
             <tr class="print-tr">${tableHeaderCells}</tr>
           </thead>
