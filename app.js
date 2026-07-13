@@ -276,12 +276,15 @@ window.executePrintJob = function() {
       const boldRightBorder = 'border-right: 3px solid #000 !important;';
       const thinRightBorder = 'border-right: 1px solid #ccc !important;';
 
-      // Clean single-row table header layout configuration
-      let tableHeaderCells = `
-        <th class="print-th" style="width: 7%; ${thinRightBorder}">Bloc</th>
-        <th class="print-th" style="width: 9%; ${thinRightBorder}">N° Appt</th>
-        <th class="print-th" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
+      // ROW 1: Identity fields with rowspan="2" & Trimester labels with colspan="3"
+      let mainHeaderCells = `
+        <th class="print-th" rowspan="2" style="width: 7%; ${thinRightBorder}">Bloc</th>
+        <th class="print-th" rowspan="2" style="width: 9%; ${thinRightBorder}">N° Appt</th>
+        <th class="print-th" rowspan="2" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
       `;
+
+      // ROW 2: Empty width mapping slots underneath the trimester groups
+      let subHeaderCells = '';
 
       targetPeriods.forEach((p, idx) => {
         const cfg = periodsConfig.find(c => c.value === p);
@@ -289,10 +292,16 @@ window.executePrintJob = function() {
         const isLastTrimester = (idx === targetPeriods.length - 1);
         const rightGroupBorder = isLastTrimester ? '' : boldRightBorder;
 
-        // Displays trimester name only once in the first sub-column slot
-        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${thinRightBorder}">${periodLabel}</th>`;
-        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${thinRightBorder}"></th>`;
-        tableHeaderCells += `<th class="print-th" style="width: 5%; font-size: 10px; ${rightGroupBorder}"></th>`;
+        // Spans across three monthly columns, prevents wrapping, and scales font-size up
+        mainHeaderCells += `
+          <th class="print-th" colspan="3" style="font-size: 13px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; ${rightGroupBorder}">
+            ${periodLabel}
+          </th>`;
+
+        // Creates 3 underlying cells mapping out 5% width segments
+        subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
+        subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
+        subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${rightGroupBorder}"></th>`;
       });
 
       let tableRowsHTML = blockResidents.map(r => {
@@ -325,7 +334,8 @@ window.executePrintJob = function() {
         </div>
         <table class="print-table" style="border-collapse: collapse; width: 100%; table-layout: fixed;">
           <thead>
-            <tr class="print-tr">${tableHeaderCells}</tr>
+            <tr class="print-tr">${mainHeaderCells}</tr>
+            <tr class="print-tr">${subHeaderCells}</tr>
           </thead>
           <tbody>
             ${tableRowsHTML}
