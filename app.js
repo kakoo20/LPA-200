@@ -273,10 +273,23 @@ window.executePrintJob = function() {
         hour: '2-digit', minute: '2-digit' 
       });
 
-      let tableHeaderCells = `<th class="print-th" style="width: 10%;">Bloc</th><th class="print-th" style="width: 12%;">N° Appt</th><th class="print-th" style="text-align: left;">Nom Complet</th>`;
+      // --- STRUCTURAL HTML GENERATION ---
+      // Row 1: Main Headers
+      let mainHeaderCells = `<th class="print-th" rowspan="2" style="width: 8%;">Bloc</th><th class="print-th" rowspan="2" style="width: 10%;">N° Appt</th><th class="print-th" rowspan="2" style="text-align: left;">Nom Complet</th>`;
+      // Row 2: Sub-headers for the 3 months split
+      let subHeaderCells = '';
+
       targetPeriods.forEach(p => {
         const cfg = periodsConfig.find(c => c.value === p);
-        tableHeaderCells += `<th class="print-th" style="width: 15%;">${cfg ? cfg.label : p}</th>`;
+        const periodLabel = cfg ? cfg.label : p;
+        
+        // Main category spans over 3 structural layout columns
+        mainHeaderCells += `<th class="print-th" colspan="3">${periodLabel}</th>`;
+        
+        // Three columns without month names
+        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
+        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
+        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
       });
 
       let tableRowsHTML = blockResidents.map(r => {
@@ -288,10 +301,14 @@ window.executePrintJob = function() {
         
         targetPeriods.forEach(p => {
           const paid = isPaid(r, p);
+          const mark = paid ? 'P' : '';
+          
+          // Print "P" across all 3 columns if paid is true
           rowCells += `
-            <td class="print-td text-center" style="font-weight: ${paid ? 'bold' : 'normal'};">
-              ${paid ? '3.600,00 DA' : ''}
-            </td>`;
+            <td class="print-td text-center" style="font-weight: bold; width: 6%;">${mark}</td>
+            <td class="print-td text-center" style="font-weight: bold; width: 6%;">${mark}</td>
+            <td class="print-td text-center" style="font-weight: bold; width: 6%;">${mark}</td>
+          `;
         });
         return `<tr class="print-tr">${rowCells}</tr>`;
       }).join('');
@@ -304,7 +321,8 @@ window.executePrintJob = function() {
         </div>
         <table class="print-table">
           <thead>
-            <tr class="print-tr">${tableHeaderCells}</tr>
+            <tr class="print-tr">${mainHeaderCells}</tr>
+            <tr class="print-tr">${subHeaderCells}</tr>
           </thead>
           <tbody>
             ${tableRowsHTML}
