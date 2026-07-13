@@ -1,5 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  setPersistence,           // Enforces strict session lifecycle constraints
+  browserSessionPersistence // Wipes credentials the instant the tab or window is closed
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -61,7 +68,11 @@ authSubmitBtn.addEventListener('click', () => {
   const password = authPasswordInput.value;
   authError.style.display = 'none';
 
-  signInWithEmailAndPassword(auth, email, password)
+  // Apply persistence state verification before executing sign-in validation
+  setPersistence(auth, browserSessionPersistence)
+    .then(() => {
+      return signInWithEmailAndPassword(auth, email, password);
+    })
     .catch(error => {
       authError.textContent = "Error: " + error.message;
       authError.style.display = 'block';
