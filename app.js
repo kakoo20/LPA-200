@@ -29,10 +29,10 @@ let residents = [];
 let openMenuId = null;
 
 const periodsConfig = [
-  { value: 'T1-2026', label: 'T1 (Jan-Feb-Mar)' },
-  { value: 'T2-2026', label: 'T2 (Apr-May-Jun)' },
-  { value: 'T3-2026', label: 'T3 (Jul-Aug-Sep)' },
-  { value: 'T4-2026', label: 'T4 (Oct-Nov-Dec)' }
+  { value: 'T1-2026', label: 'Trimestre 1' },
+  { value: 'T2-2026', label: 'Trimestre 2' },
+  { value: 'T3-2026', label: 'Trimestre 3' },
+  { value: 'T4-2026', label: 'Trimestre 4' }
 ];
 
 const authContainer = document.getElementById('authContainer');
@@ -300,7 +300,7 @@ window.executePrintJob = function() {
 
       pageWrapper.innerHTML = `
         <div class="print-header">
-          <h1>Association 200 Logements — Register</h1>
+          <h1>Association LPA200 — Registre</h1>
           <p>Etat de Paiement: <strong>Bloc ${blockKey}</strong> — ${trimesterText}</p>
           <div class="print-date-stamp">Le: ${currentTimestamp}</div>
         </div>
