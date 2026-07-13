@@ -273,23 +273,21 @@ window.executePrintJob = function() {
         hour: '2-digit', minute: '2-digit' 
       });
 
-      // --- STRUCTURAL HTML GENERATION ---
-      // Row 1: Main Headers
-      let mainHeaderCells = `<th class="print-th" rowspan="2" style="width: 8%;">Bloc</th><th class="print-th" rowspan="2" style="width: 10%;">N° Appt</th><th class="print-th" rowspan="2" style="text-align: left;">Nom Complet</th>`;
-      // Row 2: Sub-headers for the 3 months split
-      let subHeaderCells = '';
+      // Unified single-row header to guarantee perfect column tracking alignment
+      let tableHeaderCells = `
+        <th class="print-th" style="width: 8%;">Bloc</th>
+        <th class="print-th" style="width: 10%;">N° Appt</th>
+        <th class="print-th" style="text-align: left;">Nom Complet</th>
+      `;
 
       targetPeriods.forEach(p => {
         const cfg = periodsConfig.find(c => c.value === p);
         const periodLabel = cfg ? cfg.label : p;
         
-        // Main category spans over 3 structural layout columns
-        mainHeaderCells += `<th class="print-th" colspan="3">${periodLabel}</th>`;
-        
-        // Three columns without month names
-        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
-        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
-        subHeaderCells += `<th class="print-th" style="width: 6%; font-size: 10px;"></th>`;
+        // Generate 3 explicit columns per trimester side-by-side
+        tableHeaderCells += `<th class="print-th" style="width: 6%; font-size: 11px;">${periodLabel}</th>`;
+        tableHeaderCells += `<th class="print-th" style="width: 6%; font-size: 11px;">${periodLabel}</th>`;
+        tableHeaderCells += `<th class="print-th" style="width: 6%; font-size: 11px;">${periodLabel}</th>`;
       });
 
       let tableRowsHTML = blockResidents.map(r => {
@@ -303,7 +301,6 @@ window.executePrintJob = function() {
           const paid = isPaid(r, p);
           const mark = paid ? 'P' : '';
           
-          // Print "P" across all 3 columns if paid is true
           rowCells += `
             <td class="print-td text-center" style="font-weight: bold; width: 6%;">${mark}</td>
             <td class="print-td text-center" style="font-weight: bold; width: 6%;">${mark}</td>
@@ -321,8 +318,7 @@ window.executePrintJob = function() {
         </div>
         <table class="print-table">
           <thead>
-            <tr class="print-tr">${mainHeaderCells}</tr>
-            <tr class="print-tr">${subHeaderCells}</tr>
+            <tr class="print-tr">${tableHeaderCells}</tr>
           </thead>
           <tbody>
             ${tableRowsHTML}
