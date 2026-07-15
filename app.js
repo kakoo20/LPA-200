@@ -279,7 +279,7 @@ window.executePrintJob = function() {
       // ROW 1: Identity fields with rowspan="2" & Trimester labels with colspan="3"
       let mainHeaderCells = `
         <th class="print-th" rowspan="2" style="width: 7%; ${thinRightBorder}">Bloc</th>
-        <th class="print-th" rowspan="2" style="width: 9%; ${thinRightBorder}">N°</th>
+        <th class="print-th" rowspan="2" style="width: 9%; ${thinRightBorder}">N° Appt</th>
         <th class="print-th" rowspan="2" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
       `;
 
@@ -306,7 +306,7 @@ window.executePrintJob = function() {
 
       let tableRowsHTML = blockResidents.map(r => {
         let rowCells = `
-          <td class="print-td text-center" style="${thinRightBorder}"> ${escapeHtml(r.block)}</td>
+          <td class="print-td text-center" style="${thinRightBorder}">B. ${escapeHtml(r.block)}</td>
           <td class="print-td text-center">${escapeHtml(r.house)}</td>
           <td class="print-td text-left" style="text-transform: uppercase; ${boldRightBorder}">${escapeHtml(r.name)}</td>
         `;
@@ -346,8 +346,11 @@ window.executePrintJob = function() {
     });
   }
 
-  closePrintModal();
-  setTimeout(() => { window.print(); }, 250);
+  // Robust sequence: trigger print first, and only close the modal when the user is completely done with the dialog.
+  setTimeout(() => { 
+    window.print(); 
+    closePrintModal();
+  }, 350);
 }
 
 document.addEventListener('click', () => {
