@@ -276,14 +276,14 @@ window.executePrintJob = function() {
       const boldRightBorder = 'border-right: 3px solid #000 !important;';
       const thinRightBorder = 'border-right: 1px solid #ccc !important;';
 
-      // ROW 1: Identity fields with rowspan="2" & Trimester labels with colspan="3"
+      // ROW 1: Identity fields with rowspan="2" & Trimester labels with colspan="3"[cite: 9]
       let mainHeaderCells = `
         <th class="print-th" rowspan="2" style="width: 7%; ${thinRightBorder}">Bloc</th>
         <th class="print-th" rowspan="2" style="width: 9%; ${thinRightBorder}">N° Appt</th>
         <th class="print-th" rowspan="2" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
       `;
 
-      // ROW 2: Empty width mapping slots underneath the trimester groups
+      // ROW 2: Empty width mapping slots underneath the trimester groups[cite: 9]
       let subHeaderCells = '';
 
       targetPeriods.forEach((p, idx) => {
@@ -292,13 +292,13 @@ window.executePrintJob = function() {
         const isLastTrimester = (idx === targetPeriods.length - 1);
         const rightGroupBorder = isLastTrimester ? '' : boldRightBorder;
 
-        // Spans across three monthly columns, prevents wrapping, and scales font-size up
+        // Spans across three monthly columns, prevents wrapping, and scales font-size up[cite: 9]
         mainHeaderCells += `
           <th class="print-th" colspan="3" style="font-size: 13px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; ${rightGroupBorder}">
             ${periodLabel}
           </th>`;
 
-        // Creates 3 underlying cells mapping out 5% width segments
+        // Creates 3 underlying cells mapping out 5% width segments[cite: 9]
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${rightGroupBorder}"></th>`;
@@ -346,11 +346,16 @@ window.executePrintJob = function() {
     });
   }
 
-  // Robust sequence: trigger print first, and only close the modal when the user is completely done with the dialog.
-  setTimeout(() => { 
-    window.print(); 
-    closePrintModal();
-  }, 350);
+  closePrintModal();
+
+  // FIX: Let the browser complete styling layouts before raising the print window[cite: 9]
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      setTimeout(() => { 
+        window.print(); 
+      }, 600); // 600ms allows the browser engine to lay out the structures beautifully
+    });
+  });
 }
 
 document.addEventListener('click', () => {
