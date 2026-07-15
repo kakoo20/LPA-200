@@ -348,14 +348,10 @@ window.executePrintJob = function() {
 
   closePrintModal();
 
-  // FIX: Let the browser complete styling layouts before raising the print window[cite: 9]
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      setTimeout(() => { 
-        window.print(); 
-      }, 600); // 600ms allows the browser engine to lay out the structures beautifully
-    });
-  });
+  // Give browser engine a clean frame window to populate the preview data
+  setTimeout(() => {
+    window.print();
+  }, 350);
 }
 
 document.addEventListener('click', () => {

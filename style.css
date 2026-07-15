@@ -301,23 +301,33 @@ body {
   }
   
   body { 
-    background: white; 
-    color: #000;
+    background: white !important; 
+    color: #000 !important;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0; /* Remove padding from here so it doesn't glitch on multi-page */
+    padding: 0;
   }
   
-  #app, .modal-backdrop, #authContainer { display: none !important; }
-  #printArea { display: block !important; }
+  /* FIX: Hide the interior layout views, NOT the main #app wrapper itself */
+  #mainApp, .modal-backdrop, #authContainer { 
+    display: none !important; 
+  }
   
-  /* Every block now acts as its own clean page container with dedicated margins */
+  #printArea { 
+    display: block !important; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  
+  /* Clean page containment */
   .print-page-block {
     page-break-after: always;
     break-after: page;
     box-sizing: border-box;
     width: 100%;
-    padding: 12mm 15mm; /* Moving padding here guarantees it repeats perfectly on every page! */
+    padding: 12mm 15mm; 
   }
   
   .print-page-block:last-child {
@@ -325,7 +335,6 @@ body {
     break-after: avoid;
   }
 
-  /* Polished, Visible Header Layout */
   .print-header { 
     text-align: center; 
     margin-bottom: 20px;
@@ -357,7 +366,6 @@ body {
     font-weight: bold;
   }
 
-  /* The Sweet Spot Grid Layout */
   .print-table { 
     width: 100%; 
     border-collapse: collapse; 
@@ -389,21 +397,6 @@ body {
   
   .text-center { text-align: center; }
   .text-left { text-align: left; }
-  
-  .print-status-paid { 
-    color: #15803d !important; 
-    font-weight: bold;
-    background-color: #f0fdf4 !important; 
-    -webkit-print-color-adjust: exact; 
-    print-color-adjust: exact; 
-  }
-  .print-status-unpaid { 
-    color: #b91c1c !important; 
-    font-weight: bold;
-    background-color: #fef2f2 !important;
-    -webkit-print-color-adjust: exact; 
-    print-color-adjust: exact;
-  }
 }
 
 /* Append these styles directly to your existing style.css file */
