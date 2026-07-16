@@ -24,10 +24,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Globals: Dues System
 const FEE = 3600;
 let residents = [];
 let openMenuId = null;
-let currentStatusFilter = 'ALL'; // Tracks 'ALL', 'PAID', or 'UNPAID'
+let currentStatusFilter = 'ALL'; 
 
 const periodsConfig = [
   { value: 'T1-2026', label: 'Trimestre 1' },
@@ -36,31 +37,55 @@ const periodsConfig = [
   { value: 'T4-2026', label: 'Trimestre 4' }
 ];
 
+// Globals: Parking System
+let parkingSpots = [];
+let parkingStatusFilter = 'ALL';
+
+// Common Workspace Selectors
 const authContainer = document.getElementById('authContainer');
+const portalSelector = document.getElementById('portalSelector');
 const mainApp = document.getElementById('mainApp');
+const parkingApp = document.getElementById('parkingApp');
+
+// Login Input Selectors
 const authEmailInput = document.getElementById('authEmail');
 const authPasswordInput = document.getElementById('authPassword');
 const authSubmitBtn = document.getElementById('authSubmitBtn');
 const authError = document.getElementById('authError');
-const logoutBtn = document.getElementById('logoutBtn');
-const periodSelect = document.getElementById('periodSelect');
-const blockFilterSelect = document.getElementById('blockFilterSelect');
 
-// New Search Element Selectors
-const searchToggleBtn = document.getElementById('searchToggleBtn');
-const searchBarContainer = document.getElementById('searchBarContainer');
-const residentSearchInput = document.getElementById('residentSearchInput');
-const searchClearBtn = document.getElementById('searchClearBtn');
+// Hub Routing Listeners
+document.getElementById('selectNeighborhoodBtn').addEventListener('click', () => {
+  portalSelector.style.display = 'none';
+  mainApp.style.display = 'flex';
+  listenToLiveDatabaseUpdates(); 
+});
 
+document.getElementById('selectParkingBtn').addEventListener('click', () => {
+  portalSelector.style.display = 'none';
+  parkingApp.style.display = 'flex';
+  listenToParkingDatabaseUpdates(); 
+});
+
+window.showPortalSelector = function() {
+  mainApp.style.display = 'none';
+  parkingApp.style.display = 'none';
+  portalSelector.style.display = 'flex';
+};
+
+// Authentication state monitor callback
 onAuthStateChanged(auth, (user) => {
   if (user) {
     authContainer.style.display = 'none';
-    mainApp.style.display = 'flex';
-    listenToLiveDatabaseUpdates();
+    portalSelector.style.display = 'flex'; // Forward users straight to choice portal hub
+    mainApp.style.display = 'none';
+    parkingApp.style.display = 'none';
   } else {
     authContainer.style.display = 'flex';
+    portalSelector.style.display = 'none';
     mainApp.style.display = 'none';
+    parkingApp.style.display = 'none';
     residents = [];
+    parkingSpots = [];
   }
 });
 
@@ -79,9 +104,20 @@ authSubmitBtn.addEventListener('click', () => {
     });
 });
 
-logoutBtn.addEventListener('click', () => {
-  signOut(auth);
-});
+// Bind general termination buttons 
+document.getElementById('logoutBtn').addEventListener('click', () => { signOut(auth); });
+document.getElementById('portalLogoutBtn').addEventListener('click', () => { signOut(auth); });
+document.getElementById('parkingLogoutBtn').addEventListener('click', () => { signOut(auth); });
+
+/* ==========================================================================
+   SYSTEM A: NEIGHBORHOOD DUES SYSTEM BUSINESS LOGIC
+   ========================================================================== */
+const periodSelect = document.getElementById('periodSelect');
+const blockFilterSelect = document.getElementById('blockFilterSelect');
+const searchToggleBtn = document.getElementById('searchToggleBtn');
+const searchBarContainer = document.getElementById('searchBarContainer');
+const residentSearchInput = document.getElementById('residentSearchInput');
+const searchClearBtn = document.getElementById('searchClearBtn');
 
 function listenToLiveDatabaseUpdates() {
   const residentsRef = ref(db, 'residents');
@@ -148,7 +184,7 @@ window.togglePaid = function(id) {
   update(ref(db, `residents/${id}/payments`), {
     [period]: nextState
   });
-}
+};
 
 window.deleteResident = function(id) {
   const r = residents.find(x => x.id === id);
@@ -156,7 +192,7 @@ window.deleteResident = function(id) {
   if (confirm(`Are you absolutely sure you want to completely remove ${r.name}?`)) {
     remove(ref(db, 'residents/' + id));
   }
-}
+};
 
 window.toggleMenu = function(id, event) {
   event.stopPropagation();
@@ -169,22 +205,21 @@ window.toggleMenu = function(id, event) {
     menu.classList.toggle('show');
     openMenuId = menu.classList.contains('show') ? id : null;
   }
-}
+};
 
-// Modals Controller Actions
 window.openManualAddModal = function() {
   document.getElementById('houseInput').value = '';
   document.getElementById('nameInput').value = '';
   document.getElementById('manualAddModal').classList.add('show');
-}
-window.closeManualAddModal = function() { document.getElementById('manualAddModal').classList.remove('show'); }
-window.openPrintModal = function() { document.getElementById('printModal').classList.add('show'); }
-window.closePrintModal = function() { document.getElementById('printModal').classList.remove('show'); }
+};
+window.closeManualAddModal = function() { document.getElementById('manualAddModal').classList.remove('show'); };
+window.openPrintModal = function() { document.getElementById('printModal').classList.add('show'); };
+window.closePrintModal = function() { document.getElementById('printModal').classList.remove('show'); };
 window.openBulkModal = function() { 
   document.getElementById('bulkInputText').value = '';
   document.getElementById('bulkModal').classList.add('show'); 
-}
-window.closeBulkModal = function() { document.getElementById('bulkModal').classList.remove('show'); }
+};
+window.closeBulkModal = function() { document.getElementById('bulkModal').classList.remove('show'); };
 
 function processBulkImport() {
   const rawText = document.getElementById('bulkInputText').value;
@@ -214,10 +249,10 @@ function processBulkImport() {
   });
 
   if (addedCount > 0) {
-    alert(`Success! Successfully processed and saved ${addedCount} residents directly into the cloud database.`);
+    alert(`Success! Successfully processed and saved ${addedCount} residents.`);
     closeBulkModal();
   } else {
-    alert('Error parsing lines. Verify your formatting rule matches: Block, House, Full Name');
+    alert('Error parsing lines. Format: Block, House, Full Name');
   }
 }
 
@@ -276,14 +311,12 @@ window.executePrintJob = function() {
       const boldRightBorder = 'border-right: 3px solid #000 !important;';
       const thinRightBorder = 'border-right: 1px solid #ccc !important;';
 
-      // ROW 1: Identity fields with rowspan="2" & Trimester labels with colspan="3"[cite: 9]
       let mainHeaderCells = `
         <th class="print-th" rowspan="2" style="width: 7%; ${thinRightBorder}">Bloc</th>
         <th class="print-th" rowspan="2" style="width: 9%; ${thinRightBorder}">N° Appt</th>
         <th class="print-th" rowspan="2" style="text-align: left; width: 24%; ${boldRightBorder}">Nom Complet</th>
       `;
 
-      // ROW 2: Empty width mapping slots underneath the trimester groups[cite: 9]
       let subHeaderCells = '';
 
       targetPeriods.forEach((p, idx) => {
@@ -292,13 +325,11 @@ window.executePrintJob = function() {
         const isLastTrimester = (idx === targetPeriods.length - 1);
         const rightGroupBorder = isLastTrimester ? '' : boldRightBorder;
 
-        // Spans across three monthly columns, prevents wrapping, and scales font-size up[cite: 9]
         mainHeaderCells += `
           <th class="print-th" colspan="3" style="font-size: 13px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; ${rightGroupBorder}">
             ${periodLabel}
           </th>`;
 
-        // Creates 3 underlying cells mapping out 5% width segments[cite: 9]
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${thinRightBorder}"></th>`;
         subHeaderCells += `<th class="print-th" style="width: 5%; padding: 0; ${rightGroupBorder}"></th>`;
@@ -348,11 +379,8 @@ window.executePrintJob = function() {
 
   closePrintModal();
 
-  // Give browser engine a clean frame window to populate the preview data
-  setTimeout(() => {
-    window.print();
-  }, 350);
-}
+  setTimeout(() => { window.print(); }, 350);
+};
 
 document.addEventListener('click', () => {
   if (openMenuId) {
@@ -362,7 +390,6 @@ document.addEventListener('click', () => {
   }
 });
 
-// Toggle visibility of Search Tray
 searchToggleBtn.addEventListener('click', () => {
   searchBarContainer.classList.toggle('open');
   searchToggleBtn.classList.toggle('active');
@@ -376,14 +403,12 @@ searchToggleBtn.addEventListener('click', () => {
   }
 });
 
-// Real-time input handling
 residentSearchInput.addEventListener('input', () => {
   const query = residentSearchInput.value.trim();
   searchClearBtn.style.display = query.length > 0 ? 'block' : 'none';
   render();
 });
 
-// Clear input field manually
 searchClearBtn.addEventListener('click', () => {
   residentSearchInput.value = '';
   searchClearBtn.style.display = 'none';
@@ -391,18 +416,15 @@ searchClearBtn.addEventListener('click', () => {
   render();
 });
 
-// Paid / Unpaid Status Tabs Handler Logic
 document.getElementById('statusFilterTabs').addEventListener('click', (e) => {
   const clickedTab = e.target.closest('.filter-tab');
   if (!clickedTab) return;
 
-  // Toggle visual active classes across elements
   document.querySelectorAll('#statusFilterTabs .filter-tab').forEach(tab => {
     tab.classList.remove('active');
   });
   clickedTab.classList.add('active');
 
-  // Assign filter status and trigger data refresh loop
   currentStatusFilter = clickedTab.getAttribute('data-status');
   render();
 });
@@ -427,13 +449,11 @@ function render() {
   const blockFilter = getCurrentBlockFilter();
   const searchQuery = residentSearchInput.value.trim().toLowerCase();
   
-  // 1. Filter by Block
   let filtered = residents;
   if (blockFilter !== 'ALL') {
     filtered = residents.filter(r => r.block.toUpperCase() === blockFilter.toUpperCase());
   }
   
-  // 2. Filter by search text (Name or House No.)
   if (searchQuery) {
     filtered = filtered.filter(r => {
       const matchName = r.name.toLowerCase().includes(searchQuery);
@@ -442,14 +462,12 @@ function render() {
     });
   }
 
-  // 3. Filter by Paid / Unpaid Status Condition
   if (currentStatusFilter === 'PAID') {
     filtered = filtered.filter(r => isPaid(r, period));
   } else if (currentStatusFilter === 'UNPAID') {
     filtered = filtered.filter(r => !isPaid(r, period));
   }
   
-  // 4. Sort structural list entries
   filtered = sortResidents([...filtered]);
 
   const listEl = document.getElementById('residentsList');
@@ -487,7 +505,6 @@ function render() {
     }).join('');
   }
 
-  // Summary counts calculate properly based on filtered records
   const total = filtered.length;
   const paidCount = filtered.filter(r => isPaid(r, period)).length;
   const unpaidCount = total - paidCount;
@@ -500,6 +517,176 @@ function render() {
   document.getElementById('coveragePercent').textContent = coverage + '%';
   document.getElementById('progressFill').style.width = coverage + '%';
   document.getElementById('totalCount').textContent = total;
+}
+
+/* ==========================================================================
+   SYSTEM B: PARKING LOT SYSTEM BUSINESS LOGIC
+   ========================================================================== */
+const parkingSearchInput = document.getElementById('parkingSearchInput');
+
+function listenToParkingDatabaseUpdates() {
+  const parkingRef = ref(db, 'parking');
+  onValue(parkingRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      parkingSpots = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+    } else {
+      parkingSpots = [];
+    }
+    renderParking();
+  });
+}
+
+window.openAddVehicleModal = function() {
+  document.getElementById('parkingSlotInput').value = '';
+  document.getElementById('parkingPlateInput').value = '';
+  document.getElementById('parkingOwnerInput').value = '';
+  document.getElementById('parkingPhoneInput').value = '';
+  document.getElementById('parkingAddModal').classList.add('show');
+};
+
+window.closeAddVehicleModal = function() {
+  document.getElementById('parkingAddModal').classList.remove('show');
+};
+
+window.saveVehicleSpot = function() {
+  const slot = document.getElementById('parkingSlotInput').value.trim();
+  const plate = document.getElementById('parkingPlateInput').value.trim().toUpperCase();
+  const owner = document.getElementById('parkingOwnerInput').value.trim();
+  const phone = document.getElementById('parkingPhoneInput').value.trim();
+
+  if (!slot) {
+    alert('Please specify a valid slot designator.');
+    return;
+  }
+
+  // Create or Update Firebase path
+  const newId = 'park_' + slot.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+  
+  set(ref(db, 'parking/' + newId), {
+    slot: slot,
+    plate: plate || 'EMPTY',
+    owner: owner || 'None',
+    phone: phone || 'N/A',
+    occupied: !!plate,
+    timestamp: Date.now()
+  });
+
+  closeAddVehicleModal();
+};
+
+window.toggleParkingStatus = function(id) {
+  const spot = parkingSpots.find(x => x.id === id);
+  if (!spot) return;
+  const nextOccupied = !spot.occupied;
+
+  update(ref(db, `parking/${id}`), {
+    occupied: nextOccupied,
+    plate: nextOccupied ? spot.plate : 'EMPTY',
+    owner: nextOccupied ? spot.owner : 'None',
+    phone: nextOccupied ? spot.phone : 'N/A'
+  });
+};
+
+window.deleteParkingSpot = function(id) {
+  if (confirm('Permanently remove this parking spot slot coordinate from the dashboard?')) {
+    remove(ref(db, 'parking/' + id));
+  }
+};
+
+parkingSearchInput.addEventListener('input', () => { renderParking(); });
+
+document.getElementById('parkingFilterTabs').addEventListener('click', (e) => {
+  const clickedTab = e.target.closest('.filter-tab');
+  if (!clickedTab) return;
+
+  document.querySelectorAll('#parkingFilterTabs .filter-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  clickedTab.classList.add('active');
+
+  parkingStatusFilter = clickedTab.getAttribute('data-status');
+  renderParking();
+});
+
+function renderParking() {
+  const searchQuery = parkingSearchInput.value.trim().toLowerCase();
+  let filtered = [...parkingSpots];
+
+  // 1. Search Query Filter
+  if (searchQuery) {
+    filtered = filtered.filter(p => {
+      return p.slot.toLowerCase().includes(searchQuery) ||
+             p.plate.toLowerCase().includes(searchQuery) ||
+             p.owner.toLowerCase().includes(searchQuery);
+    });
+  }
+
+  // 2. Status Filter Tab condition
+  if (parkingStatusFilter === 'OCCUPIED') {
+    filtered = filtered.filter(p => p.occupied);
+  } else if (parkingStatusFilter === 'VACANT') {
+    filtered = filtered.filter(p => !p.occupied);
+  }
+
+  // Sort slot designations alphanumerically
+  filtered.sort((a, b) => a.slot.localeCompare(b.slot, undefined, { numeric: true, sensitivity: 'base' }));
+
+  const listEl = document.getElementById('parkingSlotsList');
+  const emptyEl = document.getElementById('parkingEmptyState');
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = filtered.map(p => {
+      return `
+        <div class="resident-row">
+          <span class="badge-house" style="background: var(--primary); color: white;">📍 ${escapeHtml(p.slot)}</span>
+          <span class="badge-block" style="${p.occupied ? 'background: #fef2f2; color: var(--danger);' : 'background: #f0fdf4; color: var(--success);'} font-weight:bold;">
+            ${p.occupied ? 'Occupied' : 'Vacant'}
+          </span>
+          <div class="resident-name" style="display:flex; flex-direction:column; gap:4px;">
+            <div style="font-weight: 800; font-family: monospace; font-size: 16px;">${escapeHtml(p.plate)}</div>
+            <div style="font-size:12px; color:var(--text-muted);">
+              👤 ${escapeHtml(p.owner)} — 📞 ${escapeHtml(p.phone)}
+            </div>
+          </div>
+          <button class="status-pill ${p.occupied ? 'unpaid' : 'paid'}" onclick="toggleParkingStatus('${p.id}')">
+            ${p.occupied ? '❌ Clear Spot' : '✓ Check-In'}
+          </button>
+          <div style="position:relative;">
+            <button class="menu-btn" onclick="toggleMenu('${p.id}', event)">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="3" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="8" cy="13" r="1.5"/>
+              </svg>
+            </button>
+            <div class="menu-dropdown" id="menu-${p.id}">
+              <button class="menu-item" onclick="deleteParkingSpot('${p.id}')">
+                <span>🗑️</span> Remove Spot
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // UI Calculations
+  const totalSlots = parkingSpots.length;
+  const occupiedSlots = parkingSpots.filter(p => p.occupied).length;
+  const vacantSlots = totalSlots - occupiedSlots;
+  const occupancyRate = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+
+  document.getElementById('parkingTotal').textContent = totalSlots;
+  document.getElementById('parkingOccupied').textContent = occupiedSlots;
+  document.getElementById('parkingAvailable').textContent = vacantSlots;
+  document.getElementById('parkingOccupancyRate').textContent = occupancyRate + '%';
+  document.getElementById('parkingProgressFill').style.width = occupancyRate + '%';
 }
 
 function escapeHtml(text) {

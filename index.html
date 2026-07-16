@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neighborhood Association Manager</title>
+<title>Administrative Dual-Service Portal</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="app" style="display: flex; flex-direction: column; min-height: 100vh;">
   
-  <!-- Sign In Layout Screen -->
+  <!-- 1. Sign In Layout Screen -->
   <div id="authContainer">
     <div class="auth-card">
-      <div class="auth-title">Association Portal</div>
+      <div class="auth-title">Administrative Portal</div>
       <div class="auth-subtitle">Sign in to access synchronized cloud data</div>
       <div style="display: flex; flex-direction: column; gap: 14px;">
         <div class="field">
@@ -30,15 +30,44 @@
     </div>
   </div>
 
-  <!-- Authenticated App View Workspace Layout -->
-  <div id="mainApp">
+  <!-- 2. Dual Service Selection Screen (Appears right after Login) -->
+  <div id="portalSelector" style="display: none;">
+    <div class="selector-container">
+      <h2 class="selector-title">Select Management Workspace</h2>
+      <p class="selector-subtitle">Choose the database you want to administer today</p>
+      
+      <div class="selector-grid">
+        <!-- Neighborhood System Choice Card -->
+        <div class="selector-card" id="selectNeighborhoodBtn">
+          <div class="selector-icon">🏢</div>
+          <h3>Neighborhood Dues</h3>
+          <p>Manage resident contributions, blocks, apartment units, and export print ledgers.</p>
+        </div>
+
+        <!-- Car Parking System Choice Card -->
+        <div class="selector-card" id="selectParkingBtn">
+          <div class="selector-icon">🚗</div>
+          <h3>Parking Lot Manager</h3>
+          <p>Track vehicle occupancy, assigned slot coordinates, active check-ins, and parking dues.</p>
+        </div>
+      </div>
+
+      <button class="btn-logout" id="portalLogoutBtn" style="margin-top: 30px; padding: 12px 24px;">Deconnecter</button>
+    </div>
+  </div>
+
+  <!-- 3. WORKSPACE A: Neighborhood Dues Workspace Layout -->
+  <div id="mainApp" style="display: none;">
     <div class="header">
-      <select class="period-select" id="periodSelect">
-        <option value="T1-2026">Trimester 1 (2026)</option>
-        <option value="T2-2026">Trimester 2 (2026)</option>
-        <option value="T3-2026">Trimester 3 (2026)</option>
-        <option value="T4-2026">Trimester 4 (2026)</option>
-      </select>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-back-to-portal" onclick="showPortalSelector()">← Back to Hub</button>
+        <select class="period-select" id="periodSelect">
+          <option value="T1-2026">Trimester 1 (2026)</option>
+          <option value="T2-2026">Trimester 2 (2026)</option>
+          <option value="T3-2026">Trimester 3 (2026)</option>
+          <option value="T4-2026">Trimester 4 (2026)</option>
+        </select>
+      </div>
       
       <!-- Bloc Filter Selector -->
       <div class="field" style="margin-bottom: 0;">
@@ -61,7 +90,6 @@
         </select>
       </div>
 
-      <!-- Add this new segment right here to generate the status buttons -->
       <div class="filter-tabs" id="statusFilterTabs">
         <button class="filter-tab active" data-status="ALL">Tous</button>
         <button class="filter-tab" data-status="PAID">Payé</button>
@@ -69,7 +97,6 @@
       </div>
 
       <div class="header-right-group">
-        <!-- New Toggle Search Button -->
         <button class="btn-search-toggle" id="searchToggleBtn" title="Search Residents">🔍 Rechercher</button>
         <button class="btn-add" onclick="openManualAddModal()" style="padding: 10px 16px; font-weight: 700; border-radius: var(--radius);">+ Ajouter</button>
         <button class="btn-bulk" onclick="openBulkModal()">📥 Importer une List</button>
@@ -110,21 +137,59 @@
       <div class="footer-stat"><div class="footer-stat-label">Total Households</div><div class="footer-stat-value" id="totalCount">0</div></div>
     </div>
   </div>
-</div>
 
-<!-- Dynamic Printing View Container Layout Structure -->
-<div id="printArea" style="display:none;">
-  <div class="print-header">
-    <h1>Neighborhood Association — Payment Register</h1>
-    <p id="printPeriodSummary"></p>
+  <!-- 4. WORKSPACE B: Parking Lot Management Workspace Layout -->
+  <div id="parkingApp" style="display: none; flex-direction: column; flex: 1;">
+    <div class="header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-back-to-portal" onclick="showPortalSelector()">← Back to Hub</button>
+        <h2 style="font-size: 18px; font-weight: 800;">🚗 Parking Management System</h2>
+      </div>
+
+      <!-- Search and Status Controls -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <input type="text" id="parkingSearchInput" class="period-select" style="min-width: 250px; height: 42px; font-size: 14px;" placeholder="Search Plate, Name or Slot...">
+        <div class="filter-tabs" id="parkingFilterTabs">
+          <button class="filter-tab active" data-status="ALL">All Slots</button>
+          <button class="filter-tab" data-status="OCCUPIED">Occupied</button>
+          <button class="filter-tab" data-status="VACANT">Vacant</button>
+        </div>
+      </div>
+
+      <div class="header-right-group">
+        <button class="btn-add" onclick="openAddVehicleModal()" style="padding: 10px 16px; font-weight: 700; border-radius: var(--radius); background: var(--accent);">+ Check-In Vehicle</button>
+        <button class="btn-logout" id="parkingLogoutBtn">Deconnecter</button>
+      </div>
+    </div>
+
+    <!-- Parking Space Workspace Grid Container -->
+    <div class="list-container">
+      <div class="empty-state" id="parkingEmptyState" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M5 8h14M4 8V6a1 1 0 011-1h14a1 1 0 011 1v2M4 8l1.355 10.838A2 2 0 007.335 21h9.33a2 2 0 001.98-2.162L20 8M9 12h6M9 16h6"/>
+        </svg>
+        <h3>No slots matches</h3>
+        <p>No parking registers or occupied bays fit this tracking profile.</p>
+      </div>
+      <div id="parkingSlotsList"></div>
+    </div>
+
+    <!-- Parking Bottom Metrics Status Bar -->
+    <div class="footer" style="background: #0f172a;">
+      <div class="footer-stat"><div class="footer-stat-label">Total Assigned Slots</div><div class="footer-stat-value" id="parkingTotal">0</div></div>
+      <div class="footer-stat"><div class="footer-stat-label">Occupied Spaces</div><div class="footer-stat-value success" id="parkingOccupied">0</div></div>
+      <div class="footer-stat"><div class="footer-stat-label">Available Spaces</div><div class="footer-stat-value info" id="parkingAvailable">0</div></div>
+      <div class="footer-stat">
+        <div class="footer-stat-label">Capacity Meter</div>
+        <div class="footer-stat-value warning" id="parkingOccupancyRate">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="parkingProgressFill" style="width:0%; background: var(--warning);"></div></div>
+      </div>
+    </div>
   </div>
-  <table class="print-table">
-    <thead id="printTableHeader"></thead>
-    <tbody id="printTableBody"></tbody>
-  </table>
+
 </div>
 
-<!-- Manual Add Resident Pop-up Modal UI -->
+<!-- 5. Modals for Neighborhood System (Preserved) -->
 <div class="modal-backdrop" id="manualAddModal" onclick="closeManualAddModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">➕ Add Resident Manually</div>
@@ -152,7 +217,6 @@
   </div>
 </div>
 
-<!-- Print Configuration Selection Modal UI -->
 <div class="modal-backdrop" id="printModal" onclick="closePrintModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">🖨️ Configuration Options for Printing</div>
@@ -184,7 +248,6 @@
   </div>
 </div>
 
-<!-- Bulk Import Modal Overlay Box -->
 <div class="modal-backdrop" id="bulkModal" onclick="closeBulkModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">📥 Bulk Import Residents List</div>
@@ -198,6 +261,47 @@
       <button class="btn-add" id="importSubmitBtn" style="background: var(--success);">Process & Save List</button>
     </div>
   </div>
+</div>
+
+<!-- 6. NEW MODAL: Parking Space Register Allocation Overlay -->
+<div class="modal-backdrop" id="parkingAddModal" onclick="closeAddVehicleModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-title">🚗 Parking Spot Allocation Check-In</div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="field">
+        <label>Assigned Slot Number</label>
+        <input type="text" id="parkingSlotInput" placeholder="e.g. Slot-12, A-04" maxlength="10">
+      </div>
+      <div class="field">
+        <label>License Plate Identifier</label>
+        <input type="text" id="parkingPlateInput" placeholder="e.g. 12345-116-30, AB-123-CD" style="text-transform: uppercase;" maxlength="20">
+      </div>
+      <div class="field">
+        <label>Owner Name / Details</label>
+        <input type="text" id="parkingOwnerInput" placeholder="e.g. Hakim Brahmi" maxlength="60">
+      </div>
+      <div class="field">
+        <label>Owner Telephone contact</label>
+        <input type="tel" id="parkingPhoneInput" placeholder="e.g. +213 555 12 34 56" maxlength="20">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAddVehicleModal()">Cancel</button>
+      <button class="btn-add" id="parkingSaveBtn" onclick="saveVehicleSpot()" style="background: var(--accent);">Check-In Vehicle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Printing Area Container View Layout -->
+<div id="printArea" style="display:none;">
+  <div class="print-header">
+    <h1>Neighborhood Association — Payment Register</h1>
+    <p id="printPeriodSummary"></p>
+  </div>
+  <table class="print-table">
+    <thead id="printTableHeader"></thead>
+    <tbody id="printTableBody"></tbody>
+  </table>
 </div>
 
 <script type="module" src="app.js"></script>
