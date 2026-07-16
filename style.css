@@ -1,26 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
 /* ==========================================================================
-   DESIGN TOKENS — "Midnight Console" theme
+   DESIGN TOKENS — "Clean Light Slate" theme (Light Mode Only)
    ========================================================================== */
 :root {
-  --primary: #0e1526;
-  --accent: #6366f1;
-  --accent-2: #8b5cf6;
-  --success: #34d399;
-  --danger: #f87171;
-  --warning: #fbbf24;
-  --info: #38bdf8;
-  --bg: #060a14;
-  --card: #0f1729;
-  --border: rgba(148, 163, 184, 0.16);
-  --border-strong: rgba(148, 163, 184, 0.3);
-  --text: #e9eef8;
-  --text-muted: #8fa0bb;
+  --primary: #0f172a;         /* Dark Slate for primary headings */
+  --accent: #4f46e5;          /* Vibrant Indigo */
+  --accent-2: #7c3aed;        /* Soft Purple */
+  --success: #10b981;         /* Emerald Green */
+  --danger: #ef4444;          /* Warm Red */
+  --warning: #f59e0b;         /* Crisp Amber */
+  --info: #06b6d4;            /* Soft Cyan */
+  --bg: #f8fafc;              /* Slate-50 background */
+  --card: #ffffff;            /* Pure White Card */
+  --border: rgba(148, 163, 184, 0.22); /* Soft slate border */
+  --border-strong: rgba(148, 163, 184, 0.35);
+  --text: #1e293b;            /* Dark slate body text */
+  --text-muted: #64748b;      /* Slate-500 muted text */
   --radius: 14px;
-  --shadow: 0 4px 18px rgba(2, 6, 18, 0.45);
-  --shadow-lg: 0 20px 48px rgba(2, 6, 18, 0.6);
-  --grad-accent: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --shadow: 0 4px 18px rgba(15, 23, 42, 0.05); /* Soft, natural light shadows */
+  --shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.08);
+  --grad-accent: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,8 +28,8 @@
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background:
-    radial-gradient(1100px 620px at 88% -12%, rgba(99, 102, 241, 0.16), transparent 62%),
-    radial-gradient(900px 560px at -12% 112%, rgba(56, 189, 248, 0.09), transparent 60%),
+    radial-gradient(1100px 620px at 88% -12%, rgba(99, 102, 241, 0.05), transparent 62%),
+    radial-gradient(900px 560px at -12% 112%, rgba(56, 189, 248, 0.03), transparent 60%),
     var(--bg);
   background-attachment: fixed;
   color: var(--text);
@@ -39,22 +39,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-::selection { background: rgba(99, 102, 241, 0.45); color: #fff; }
+::selection { background: rgba(99, 102, 241, 0.15); color: var(--accent); }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.28);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 8px;
   border: 2px solid var(--bg);
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
+::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
 
 button { font-family: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ==========================================================================
-   1. AUTH SCREEN — glass card over ambient glow field
+   1. AUTH SCREEN
    ========================================================================== */
 #authContainer {
   display: flex;
@@ -65,12 +65,10 @@ button { font-family: inherit; }
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(700px 420px at 20% 15%, rgba(99, 102, 241, 0.22), transparent 65%),
-    radial-gradient(650px 420px at 82% 85%, rgba(139, 92, 246, 0.18), transparent 65%),
-    radial-gradient(500px 320px at 75% 20%, rgba(56, 189, 248, 0.1), transparent 60%),
-    linear-gradient(160deg, #070b16 0%, #0a1020 100%);
+    radial-gradient(700px 420px at 20% 15%, rgba(99, 102, 241, 0.08), transparent 65%),
+    radial-gradient(650px 420px at 82% 85%, rgba(139, 92, 246, 0.06), transparent 65%),
+    linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%);
 }
-/* Ambient floating orbs */
 #authContainer::before,
 #authContainer::after {
   content: "";
@@ -81,19 +79,19 @@ button { font-family: inherit; }
 }
 #authContainer::before {
   width: 340px; height: 340px;
-  background: rgba(99, 102, 241, 0.22);
+  background: rgba(99, 102, 241, 0.08);
   top: -90px; left: -70px;
 }
 #authContainer::after {
   width: 300px; height: 300px;
-  background: rgba(56, 189, 248, 0.14);
+  background: rgba(56, 189, 248, 0.06);
   bottom: -80px; right: -60px;
 }
 
 .auth-card {
   position: relative;
   z-index: 1;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+  background: rgba(255, 255, 255, 0.85);
   border: 1px solid var(--border-strong);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
@@ -105,7 +103,6 @@ button { font-family: inherit; }
   overflow: hidden;
   animation: cardRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-/* Gradient top edge */
 .auth-card::before {
   content: "";
   position: absolute;
@@ -113,7 +110,6 @@ button { font-family: inherit; }
   height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--info));
 }
-/* Diamond brand mark above the title */
 .auth-title::before {
   content: "";
   display: block;
@@ -122,7 +118,7 @@ button { font-family: inherit; }
   border-radius: 13px;
   background: var(--grad-accent);
   transform: rotate(45deg) scale(0.72);
-  box-shadow: 0 0 34px rgba(99, 102, 241, 0.55);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
 }
 
 @keyframes cardRise {
@@ -136,7 +132,7 @@ button { font-family: inherit; }
   letter-spacing: -0.5px;
   margin-bottom: 8px;
   text-align: center;
-  background: linear-gradient(92deg, #ffffff 20%, #c7d2fe 80%);
+  background: linear-gradient(92deg, #0f172a 20%, #4f46e5 80%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -161,15 +157,15 @@ button { font-family: inherit; }
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.25s ease, filter 0.2s ease;
   margin-top: 12px;
-  box-shadow: 0 8px 26px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 26px rgba(99, 102, 241, 0.2);
 }
-.auth-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(99, 102, 241, 0.5); }
+.auth-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3); }
 .auth-btn:active { transform: translateY(0); }
 
 .error-message {
-  color: #fca5a5;
-  background: rgba(248, 113, 113, 0.1);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   padding: 10px 14px;
   border-radius: 10px;
   font-size: 13px;
@@ -180,12 +176,12 @@ button { font-family: inherit; }
 }
 
 /* ==========================================================================
-   2. SHARED CHROME — header toolbar, controls, buttons
+   2. SHARED CHROME
    ========================================================================== */
 #mainApp { display: none; flex-direction: column; flex: 1; }
 
 .header {
-  background: rgba(8, 12, 24, 0.82);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
@@ -198,7 +194,7 @@ button { font-family: inherit; }
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 6px 24px rgba(2, 6, 18, 0.4);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
 }
 .header-right-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
@@ -209,20 +205,19 @@ button { font-family: inherit; }
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
-  background-color: rgba(255, 255, 255, 0.045);
+  background-color: rgba(15, 23, 42, 0.03);
   cursor: pointer;
   min-width: 200px;
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
-.period-select:hover { background-color: rgba(255, 255, 255, 0.08); }
-.period-select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); }
+.period-select:hover { background-color: rgba(15, 23, 42, 0.06); }
+.period-select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 .period-select option, .period-select optgroup { background: var(--card); color: var(--text); }
 
-/* Custom chevron only on real <select> elements (the parking search is an <input>) */
 select.period-select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238fa0bb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 40px;
@@ -231,7 +226,7 @@ select.period-select {
 .filter-tabs {
   display: flex;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.035);
   border: 1px solid var(--border);
   padding: 4px;
   border-radius: 12px;
@@ -252,7 +247,7 @@ select.period-select {
 .filter-tab.active {
   background: var(--grad-accent);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
 }
 
 .btn-print {
@@ -260,7 +255,7 @@ select.period-select {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border: 1px solid var(--border-strong);
   border-radius: 11px;
@@ -270,7 +265,7 @@ select.period-select {
   transition: all 0.2s ease;
 }
 .btn-print:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.06);
   border-color: rgba(148, 163, 184, 0.5);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
@@ -278,20 +273,20 @@ select.period-select {
 
 .btn-bulk {
   padding: 10px 16px;
-  background: rgba(52, 211, 153, 0.1);
-  color: #6ee7b7;
-  border: 1px solid rgba(52, 211, 153, 0.32);
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 11px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.btn-bulk:hover { background: rgba(52, 211, 153, 0.18); transform: translateY(-1px); }
+.btn-bulk:hover { background: rgba(16, 185, 129, 0.14); transform: translateY(-1px); }
 
 .btn-logout {
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: 11px;
@@ -301,14 +296,14 @@ select.period-select {
   transition: all 0.2s ease;
 }
 .btn-logout:hover {
-  background: rgba(248, 113, 113, 0.12);
-  border-color: rgba(248, 113, 113, 0.4);
-  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #dc2626;
 }
 
 .btn-back-to-portal {
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.03);
   border: 1px solid var(--border);
   color: var(--text);
   font-weight: 700;
@@ -319,13 +314,13 @@ select.period-select {
   white-space: nowrap;
 }
 .btn-back-to-portal:hover {
-  background: rgba(99, 102, 241, 0.14);
-  border-color: rgba(99, 102, 241, 0.45);
-  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: var(--accent);
 }
 
 /* ==========================================================================
-   3. FORM FIELDS (modals + shared)
+   3. FORM FIELDS
    ========================================================================== */
 .field label {
   display: block;
@@ -344,20 +339,20 @@ select.period-select {
   font-size: 15px;
   font-family: inherit;
   color: var(--text);
-  background-color: rgba(255, 255, 255, 0.045);
+  background-color: rgba(15, 23, 42, 0.02);
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
-.field input::placeholder { color: rgba(143, 160, 187, 0.55); }
-.field input:hover, .field select:hover { background-color: rgba(255, 255, 255, 0.07); }
+.field input::placeholder { color: rgba(100, 116, 139, 0.5); }
+.field input:hover, .field select:hover { background-color: rgba(15, 23, 42, 0.04); }
 .field input:focus, .field select:focus {
   border-color: var(--accent);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 .field select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238fa0bb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 40px;
@@ -376,13 +371,13 @@ select.period-select {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.25s ease, filter 0.2s ease;
   height: fit-content;
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.2);
 }
-.btn-add:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 10px 28px rgba(99, 102, 241, 0.5); }
+.btn-add:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 10px 28px rgba(99, 102, 241, 0.3); }
 .btn-add:active { transform: translateY(0); }
 
 /* ==========================================================================
-   4. LIST AREA — responsive card grid (replaces stacked rows)
+   4. LIST AREA
    ========================================================================== */
 .list-container { flex: 1; padding: 22px 26px; overflow-y: auto; }
 
@@ -396,8 +391,7 @@ select.period-select {
 .empty-state svg {
   width: 68px; height: 68px;
   margin-bottom: 18px;
-  opacity: 0.45;
-  filter: drop-shadow(0 0 18px rgba(99, 102, 241, 0.35));
+  opacity: 0.25;
 }
 .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); font-weight: 700; }
 .empty-state p { font-size: 14px; line-height: 1.6; max-width: 420px; margin: 0 auto; }
@@ -406,7 +400,7 @@ select.period-select {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: var(--card);
   padding: 15px 18px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -417,14 +411,14 @@ select.period-select {
 }
 .resident-row:hover {
   transform: translateY(-2px);
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 12px 30px rgba(2, 6, 18, 0.55), 0 0 0 1px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
 .badge-block {
-  background: rgba(148, 163, 184, 0.12);
-  color: #b9c4d8;
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(148, 163, 184, 0.15);
+  color: #475569;
+  border: 1px solid rgba(148, 163, 184, 0.25);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
@@ -434,9 +428,9 @@ select.period-select {
   white-space: nowrap;
 }
 .badge-house {
-  background: rgba(99, 102, 241, 0.15);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.32);
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
@@ -468,17 +462,17 @@ select.period-select {
   white-space: nowrap;
 }
 .status-pill.unpaid {
-  background: rgba(248, 113, 113, 0.12);
-  color: #fca5a5;
-  border-color: rgba(248, 113, 113, 0.38);
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  border-color: rgba(239, 68, 68, 0.2);
 }
-.status-pill.unpaid:hover { background: rgba(248, 113, 113, 0.22); box-shadow: 0 0 18px rgba(248, 113, 113, 0.25); }
+.status-pill.unpaid:hover { background: rgba(239, 68, 68, 0.14); }
 .status-pill.paid {
-  background: rgba(52, 211, 153, 0.12);
-  color: #6ee7b7;
-  border-color: rgba(52, 211, 153, 0.38);
+  background: rgba(16, 185, 129, 0.08);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.2);
 }
-.status-pill.paid:hover { background: rgba(52, 211, 153, 0.22); box-shadow: 0 0 18px rgba(52, 211, 153, 0.25); }
+.status-pill.paid:hover { background: rgba(16, 185, 129, 0.14); }
 
 .menu-btn {
   background: none;
@@ -490,12 +484,12 @@ select.period-select {
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
-.menu-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }
+.menu-btn:hover { background: rgba(15, 23, 42, 0.05); color: var(--text); }
 .menu-dropdown {
   position: absolute;
   right: 0;
   top: 38px;
-  background: #141d33;
+  background: #ffffff;
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   box-shadow: var(--shadow-lg);
@@ -520,29 +514,28 @@ select.period-select {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: #fca5a5;
+  color: #dc2626;
   cursor: pointer;
   transition: background 0.15s ease;
 }
-.menu-item:hover { background: rgba(248, 113, 113, 0.12); }
+.menu-item:hover { background: rgba(239, 68, 68, 0.08); }
 
-/* Parking rows: retint the JS-injected inline styles to match the dark theme.
-   (attribute selectors target ONLY elements that carry inline styles) */
+/* Parking rows style modifiers override */
 .badge-house[style] {
   background: var(--grad-accent) !important;
   color: #fff !important;
   border-color: transparent;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
 }
 .badge-block[style*="fef2f2"] { /* Occupied */
-  background: rgba(248, 113, 113, 0.13) !important;
-  color: #fca5a5 !important;
-  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #dc2626 !important;
+  border-color: rgba(239, 68, 68, 0.2);
 }
 .badge-block[style*="f0fdf4"] { /* Vacant */
-  background: rgba(52, 211, 153, 0.13) !important;
-  color: #6ee7b7 !important;
-  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(16, 185, 129, 0.08) !important;
+  color: #059669 !important;
+  border-color: rgba(16, 185, 129, 0.2);
 }
 .resident-name div[style*="monospace"] {
   font-family: 'JetBrains Mono', ui-monospace, monospace !important;
@@ -550,10 +543,10 @@ select.period-select {
 }
 
 /* ==========================================================================
-   5. FOOTER STATS BAR — elevated metrics dock
+   5. FOOTER STATS BAR
    ========================================================================== */
 .footer {
-  background: linear-gradient(180deg, #0d1526 0%, #080d19 100%) !important;
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
   color: var(--text);
   padding: 18px 26px;
   display: grid;
@@ -564,7 +557,7 @@ select.period-select {
   bottom: 0;
   z-index: 50;
   border-top: 1px solid var(--border-strong);
-  box-shadow: 0 -10px 34px rgba(2, 6, 18, 0.55);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.03);
 }
 .footer-stat {
   text-align: center;
@@ -579,7 +572,7 @@ select.period-select {
   transform: translateY(-50%);
   height: 44px;
   width: 1px;
-  background: rgba(148, 163, 184, 0.16);
+  background: rgba(148, 163, 184, 0.3);
 }
 .footer-stat-label {
   font-size: 10.5px;
@@ -594,40 +587,38 @@ select.period-select {
   font-size: 23px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  color: #fff;
+  color: var(--primary);
 }
-.footer-stat-value.success { color: #6ee7b7; text-shadow: 0 0 26px rgba(52, 211, 153, 0.45); }
-.footer-stat-value.danger  { color: #fca5a5; text-shadow: 0 0 26px rgba(248, 113, 113, 0.45); }
-.footer-stat-value.info    { color: #7dd3fc; text-shadow: 0 0 26px rgba(56, 189, 248, 0.45); }
-.footer-stat-value.warning { color: #fcd34d; text-shadow: 0 0 26px rgba(251, 191, 36, 0.45); }
+.footer-stat-value.success { color: #059669; }
+.footer-stat-value.danger  { color: #dc2626; }
+.footer-stat-value.info    { color: #0284c7; }
+.footer-stat-value.warning { color: #d97706; }
 
 .progress-bar {
   width: 100%;
   max-width: 220px;
   height: 7px;
-  background: rgba(255, 255, 255, 0.09);
+  background: rgba(148, 163, 184, 0.2);
   border-radius: 6px;
   overflow: hidden;
   margin: 8px auto 0;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #34d399, #6ee7b7);
+  background: linear-gradient(90deg, #10b981, #34d399);
   border-radius: 6px;
   transition: width 0.5s ease;
-  box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
 }
 #parkingProgressFill {
-  background: linear-gradient(90deg, #f59e0b, #fcd34d) !important;
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.55);
+  background: linear-gradient(90deg, #d97706, #fbbf24) !important;
 }
 
 /* ==========================================================================
-   6. SEARCH TOGGLE + SLIDE-DOWN SEARCH BAR
+   6. SEARCH TOGGLE & SLIDE-DOWN SEARCH BAR
    ========================================================================== */
 .btn-search-toggle {
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 11px;
@@ -637,13 +628,13 @@ select.period-select {
   transition: all 0.2s ease;
 }
 .btn-search-toggle:hover, .btn-search-toggle.active {
-  background: rgba(99, 102, 241, 0.14);
-  border-color: rgba(99, 102, 241, 0.5);
-  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: var(--accent);
 }
 
 .search-bar-container {
-  background: rgba(10, 15, 28, 0.9);
+  background: rgba(248, 250, 252, 0.95);
   border-bottom: 1px solid var(--border);
   padding: 0 26px;
   height: 0;
@@ -681,15 +672,15 @@ select.period-select {
   font-size: 14px;
   font-family: inherit;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   transition: all 0.2s ease;
 }
-.search-input-wrapper input::placeholder { color: rgba(143, 160, 187, 0.55); }
+.search-input-wrapper input::placeholder { color: rgba(100, 116, 139, 0.5); }
 .search-input-wrapper input:focus {
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.08);
+  background: #ffffff;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 .search-clear-btn {
   position: absolute;
@@ -703,16 +694,16 @@ select.period-select {
   border-radius: 6px;
   transition: color 0.15s ease;
 }
-.search-clear-btn:hover { color: #fca5a5; }
+.search-clear-btn:hover { color: #dc2626; }
 
 /* ==========================================================================
-   7. MODALS — dark glass overlays with pop-in animation
+   7. MODALS
    ========================================================================== */
 .modal-backdrop {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(3, 6, 14, 0.72);
+  background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -727,7 +718,7 @@ select.period-select {
 .modal-backdrop.show { opacity: 1; pointer-events: auto; }
 
 .modal-card {
-  background: linear-gradient(170deg, #131c33 0%, #0d1425 100%);
+  background: #ffffff;
   border: 1px solid var(--border-strong);
   padding: 28px;
   border-radius: 20px;
@@ -757,7 +748,7 @@ select.period-select {
 }
 .btn-secondary {
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border: 1px solid var(--border-strong);
   border-radius: 10px;
@@ -766,7 +757,7 @@ select.period-select {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.btn-secondary:hover { background: rgba(255, 255, 255, 0.11); }
+.btn-secondary:hover { background: rgba(15, 23, 42, 0.06); }
 
 .bulk-textarea {
   width: 100%;
@@ -779,27 +770,27 @@ select.period-select {
   line-height: 1.6;
   resize: vertical;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(15, 23, 42, 0.01);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .bulk-textarea:focus {
   border-color: var(--success);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 .bulk-help {
   font-size: 12.5px;
   color: var(--text-muted);
   line-height: 1.6;
   margin-top: 10px;
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(15, 23, 42, 0.02);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 14px;
 }
 .bulk-help code {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  color: #a5b4fc;
+  color: var(--accent);
   font-size: 12px;
 }
 .bulk-help strong { color: var(--text); }
@@ -816,10 +807,9 @@ select.period-select {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(760px 460px at 18% 12%, rgba(99, 102, 241, 0.2), transparent 65%),
-    radial-gradient(700px 460px at 84% 88%, rgba(251, 191, 36, 0.08), transparent 65%),
-    radial-gradient(520px 340px at 78% 18%, rgba(56, 189, 248, 0.1), transparent 60%),
-    linear-gradient(160deg, #070b16 0%, #0a1020 100%);
+    radial-gradient(760px 460px at 18% 12%, rgba(99, 102, 241, 0.06), transparent 65%),
+    radial-gradient(700px 460px at 84% 88%, rgba(245, 158, 11, 0.04), transparent 65%),
+    linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%);
 }
 .selector-container {
   width: 100%;
@@ -833,7 +823,7 @@ select.period-select {
   font-weight: 800;
   letter-spacing: -0.8px;
   margin-bottom: 10px;
-  background: linear-gradient(92deg, #ffffff 25%, #c7d2fe 85%);
+  background: linear-gradient(92deg, #0f172a 25%, #4f46e5 85%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -849,10 +839,8 @@ select.period-select {
   gap: 26px;
 }
 .selector-card {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  background: #ffffff;
   border: 1px solid var(--border-strong);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-radius: 20px;
   padding: 44px 28px 38px;
   cursor: pointer;
@@ -864,7 +852,6 @@ select.period-select {
   animation: cardRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .selector-card:nth-child(2) { animation-delay: 0.09s; }
-/* Hover sheen sweep */
 .selector-card::before {
   content: "";
   position: absolute;
@@ -876,8 +863,8 @@ select.period-select {
 }
 .selector-card:hover {
   transform: translateY(-7px);
-  border-color: rgba(99, 102, 241, 0.55);
-  box-shadow: 0 24px 54px rgba(2, 6, 18, 0.65), 0 0 0 1px rgba(99, 102, 241, 0.3);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
 }
 .selector-card:hover::before { opacity: 1; }
 
@@ -890,16 +877,16 @@ select.period-select {
   justify-content: center;
   font-size: 40px;
   border-radius: 24px;
-  background: linear-gradient(140deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.12));
-  border: 1px solid rgba(99, 102, 241, 0.38);
-  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.25);
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.05);
   transition: transform 0.25s ease;
 }
 .selector-card:hover .selector-icon { transform: scale(1.06) rotate(-3deg); }
 .selector-card:nth-child(2) .selector-icon {
-  background: linear-gradient(140deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
-  border-color: rgba(251, 191, 36, 0.38);
-  box-shadow: 0 10px 28px rgba(251, 191, 36, 0.2);
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.05);
 }
 .selector-card h3 {
   font-size: 20px;
@@ -917,12 +904,12 @@ select.period-select {
 }
 
 /* ==========================================================================
-   9. PRINT LEDGER — clean paper output (unchanged behavior)
+   9. PRINT LEDGER (Kept mathematically intact and styled for paper)
    ========================================================================== */
 @media print {
   @page {
     size: A4 landscape;
-    margin: 0; /* Keeps browser headers/URLs hidden */
+    margin: 0;
   }
 
   body {
@@ -933,7 +920,6 @@ select.period-select {
     padding: 0;
   }
 
-  /* FIX: Hide the interior layout views, NOT the main #app wrapper itself */
   #mainApp, .modal-backdrop, #authContainer {
     display: none !important;
   }
@@ -946,7 +932,6 @@ select.period-select {
     width: 100%;
   }
 
-  /* Clean page containment */
   .print-page-block {
     page-break-after: always;
     break-after: page;
